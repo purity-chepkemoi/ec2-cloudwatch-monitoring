@@ -122,14 +122,7 @@ One of the main concepts demonstrated in this lab was how different AWS services
 CloudWatch monitors the resource, evaluates the alarm condition and initiates a notification action. SNS handles the delivery of that notification to the subscribed email address.
 
 ### Workflow Architecture
-
-```text
-[Amazon EC2] ──(Generates Metrics)──> [Amazon CloudWatch] ──(Evaluates 60% Threshold)──> [CloudWatch Alarm]
-                                                                                               │
-                                                                                        (Triggers Action)
-                                                                                               ▼
-[User Email] <──(Delivers Notification)── [Amazon SNS Topic] <───────(Sends Alert)─────────────┘
-```
+<img width="2270" height="1001" alt="cloudwatchmonitoring" src="https://github.com/user-attachments/assets/c14b847b-53d6-449c-b023-246629f5236b" />
 
 #### How the workflow operates:
 1. **Amazon EC2 generates metrics:** The EC2 instance produces CPU utilization data that CloudWatch can monitor.
@@ -179,8 +172,6 @@ Next, I opened Amazon CloudWatch and navigated to **Metrics**.
 
 Under **EC2 Per-Instance Metrics**, I selected the `CPUUtilization` metric associated with the `Stress Test` instance.
 
-I then created a metric alarm using the configuration described in Section 4.
-
 Under **Configure actions**, I selected the **In alarm** state trigger and associated the alarm with the existing SNS topic, `MyCwAlarm`.
 ![Screenshot  - create alarm](screenshots/t2createalarm.png) 
 
@@ -204,6 +195,7 @@ I ran the following command:
 ```bash
 sudo stress --cpu 10 -v --timeout 400s
 ```
+![Screenshot - CPU Stress Test](screenshots/t3increasecpuload.png)  
 
 The command used the `stress` utility to generate CPU load for 400 seconds.
 
@@ -219,8 +211,6 @@ top
 
 The `top` command displayed live system resource usage, allowing me to observe the CPU activity while the stress test was running.
 
-![Screenshot - CPU Stress Test](screenshots/t3increasecpuload.png)  
-
 ---
 
 ### Step 4: Verify the CloudWatch Alarm and SNS Notification
@@ -228,15 +218,12 @@ The `top` command displayed live system resource usage, allowing me to observe t
 After starting the stress test, I returned to the CloudWatch Alarms page and monitored `LabCPUUtilizationAlarm`.
 
 As CPU utilization increased above the configured threshold, the alarm changed to the **In alarm** state.
+![Screenshot - CloudWatch Alarm Triggered](screenshots/t3inalarm.png) 
 
 I then checked my email inbox and confirmed that I had received the notification from **AWS Notifications**.
+![Screenshot 9 - SNS Email Notification](screenshots/t3email.png)
 
 This verified that the monitoring and notification workflow was functioning as expected.
-
-![Screenshot - CloudWatch Alarm Triggered](screenshots/t3inalarm.png)  
-
-![Screenshot 9 - SNS Email Notification](screenshots/t3email.png)  
-
 ---
 
 ### Step 5: Create a CloudWatch Dashboard
